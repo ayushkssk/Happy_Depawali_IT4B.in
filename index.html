@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diwali Wishes from IT4B.in</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.12.0/tsparticles.bundle.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #4a1d96, #f97316, #facc15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        header, footer {
+            width: 100%;
+            padding: 1rem;
+            background-color: rgba(74, 29, 150, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        h1, h2 {
+            color: #fde047;
+            text-align: center;
+        }
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .diya-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+        .diya-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .flame {
+            position: absolute;
+            top: 25%;
+            right: 25%;
+            width: 60px;
+            height: 60px;
+            background-color: #f97316;
+            border-radius: 50%;
+            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.5s;
+            box-shadow: 0 0 30px 15px rgba(255, 165, 0, 0.7);
+        }
+        .message {
+            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .wish-message {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-width: 300px;
+            margin: 0 1rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .wish-message h2 {
+            color: #fde047;
+            margin-bottom: 0.5rem;
+        }
+        .wish-message p {
+            color: white;
+        }
+        .firecracker {
+            position: absolute;
+            width: 8px;
+            height: 32px;
+            background-color: #fde047;
+        }
+        .firecracker::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+        footer p {
+            color: #fef3c7;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .wish-message {
+                max-width: 400px;
+            }
+        }
+        .floating-quote {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-style: italic;
+            pointer-events: none;
+            animation: float 20s linear infinite;
+            z-index: 5;
+        }
+        .logo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: auto;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        .floating-quote {
+            font-family: var(--font);
+            color: var(--color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="https://it4b.in" target="_blank">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-2UuSXu1WhfQKZzVQeakxep2rMPEhm3.png" alt="IT4B.in Logo" class="logo">
+    </a>
+    <div class="container">
+        <header>
+            <h2>IT4B.in Wishes You a Happy Deepawali</h2>
+        </header>
+        <div class="main-content">
+            <h1>Happy Diwali!</h1>
+            <div class="diya-container" id="diya">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-IZmdZHATI4SJvuHGZmTrfntSqxQHK0.png" alt="Decorative golden Diwali diya with intricate patterns and a lit flame" class="diya-image">
+                <div class="flame" id="flame"></div>
+            </div>
+            <p class="message" id="message">Click the diya to light it and start the celebration</p>
+            <div class="wish-message" id="wish-message">
+                <h2>Wishing You a Joyous Diwali!</h2>
+                <p>May the festival of lights brighten your life with joy, prosperity, and inner peace. Let the light of the diyas guide you towards happiness and success.</p>
+                <p>Hope you are doing well in our WhatsApp group IT4B.in Family. Let's support each other and be a helping hand.</p>
+            </div>
+        </div>
+        <footer>
+            <p>Developed By @Ayush (IT4B.in)</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const diya = document.getElementById('diya');
+            const flame = document.getElementById('flame');
+            const message = document.getElementById('message');
+            const wishMessage = document.getElementById('wish-message');
+            let isLit = false;
+            let firecrackers = [];
+
+            tsParticles.load("tsparticles", {
+                particles: {
+                    color: { value: "#FFD700" },
+                    move: { enable: true, speed: 2 },
+                    number: { value: 100 },
+                    opacity: { value: 0.5, random: true },
+                    shape: { type: "circle" },
+                    size: { value: 3, random: true },
+                },
+            });
+
+            diya.addEventListener('click', () => {
+                if (!isLit) {
+                    isLit = true;
+                    flame.style.opacity = '1';
+                    message.textContent = 'The diya is lit! Enjoy the fireworks!';
+                    setTimeout(() => {
+                        wishMessage.style.opacity = '1';
+                        wishMessage.style.transform = 'scale(1)';
+                    }, 1000);
+                    startFireworks();
+                }
+            });
+
+            function startFireworks() {
+                setInterval(addFirecracker, 500);
+            }
+
+            function addFirecracker() {
+                const firecracker = document.createElement('div');
+                firecracker.className = 'firecracker';
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * 100;
+                firecracker.style.left = `${x}px`;
+                firecracker.style.bottom = `${y}px`;
+                document.body.appendChild(firecracker);
+
+                firecracker.animate([
+                    { opacity: 1, transform: 'scale(0) translateY(0)' },
+                    { opacity: 1, transform: 'scale(1) translateY(-100px)' },
+                    { opacity: 0, transform: 'scale(1.5) translateY(-150px)' }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                });
+
+                setTimeout(() => {
+                    firecracker.remove();
+                }, 1000);
+            }
+        });
+
+        function getRandomFont() {
+            const fonts = ['Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black'];
+            return fonts[Math.floor(Math.random() * fonts.length)];
+        }
+
+        function getRandomColor() {
+            return `hsl(${Math.random() * 360}, 100%, 75%)`;
+        }
+
+        function createFloatingQuotes() {
+            const quotes = [
+                "Light up lives",
+                "Spread joy",
+                "Be the change",
+                "Embrace kindness",
+                "Share happiness",
+                "Illuminate hearts"
+            ];
+
+            setInterval(() => {
+                const quote = document.createElement('div');
+                quote.className = 'floating-quote';
+                quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+                quote.style.left = `${Math.random() * 100}vw`;
+                quote.style.top = `${Math.random() * 100}vh`;
+                quote.style.setProperty('--font', getRandomFont());
+                quote.style.setProperty('--color', getRandomColor());
+                document.body.appendChild(quote);
+
+                setTimeout(() => {
+                    quote.remove();
+                }, 20000);
+            }, 3000);
+        }
+
+        createFloatingQuotes();
+    </script>
+</body>
+</html>
