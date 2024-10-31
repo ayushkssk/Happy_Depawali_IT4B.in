@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diwali Wishes from IT4B.in</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/2.12.0/tsparticles.bundle.min.js"></script>
+    <audio id="diwaliMusic" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+    <audio id="lightSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mp3">
+    </audio>
+    <audio id="fireworkSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mp3">
+    </audio>
     <style>
         :root {
             --header-height: 60px;
             --footer-height: 40px;
+            --day-bg: linear-gradient(to bottom right, #87CEEB, #FFB6C1, #FFE4B5);
+            --night-bg: linear-gradient(to bottom right, #4a1d96, #f97316, #facc15);
+            --day-text: #333333;
+            --night-text: #fde047;
         }
         body, html {
             margin: 0;
@@ -64,16 +77,23 @@
         .diya-container {
             position: relative;
             width: 100%;
-            max-width: 300px;
+            max-width: 200px;
             height: 30vh;
             max-height: 200px;
             margin-bottom: 1rem;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .diya-image {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .diya-image:hover {
+            transform: scale(1.05);
         }
         .flame {
             position: absolute;
@@ -226,6 +246,577 @@
                 font-size: 0.8rem;
             }
         }
+        .diya-svg {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .diya-base {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .diya-bowl {
+            filter: drop-shadow(0 -2px 4px rgba(0,0,0,0.2));
+        }
+        .flame {
+            transform-origin: center bottom;
+            animation: flicker 1.5s ease-in-out infinite alternate;
+            transition: opacity 0.5s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 160, 0, 0.8));
+        }
+        .glow {
+            animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+        @keyframes flicker {
+            0%, 100% { transform: scaleX(1) scaleY(1); }
+            25% { transform: scaleX(0.95) scaleY(1.05); }
+            50% { transform: scaleX(1.05) scaleY(0.95); }
+            75% { transform: scaleX(0.98) scaleY(1.02); }
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0.4; r: 25; }
+            100% { opacity: 0.8; r: 30; }
+        }
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+        @keyframes explode {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(var(--y)) translateX(var(--x)) scale(0);
+                opacity: 0;
+            }
+        }
+        @keyframes flash {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+        .rocket {
+            position: fixed;
+            bottom: -20px;
+            width: 6px;
+            height: 25px;
+            background: linear-gradient(to bottom, #ff4d4d, #ff9933);
+            z-index: 999;
+            transform-origin: bottom center;
+        }
+        .rocket::before {  /* Rocket head */
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-bottom: 8px solid #ff4d4d;
+        }
+        .rocket-trail {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            width: 4px;
+            height: 15px;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(
+                180deg,
+                #ffcc00,
+                #ff6600,
+                transparent 80%
+            );
+            filter: blur(1px);
+            opacity: 0.8;
+        }
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #ffcc00;
+            filter: blur(1px);
+            animation: sparkle 0.3s linear infinite;
+        }
+        .star-particle {
+            position: absolute;
+            background: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starExplode var(--duration, 1.5s) ease-out forwards;
+        }
+        @keyframes rocketLaunch {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes starExplode {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: 
+                    translate(var(--x), var(--y)) 
+                    scale(0) 
+                    rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+        .explosion-flash {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, white, transparent);
+            animation: flash 0.5s ease-out forwards;
+        }
+        .floating-text {
+            position: fixed;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                         0 0 20px rgba(255,255,255,0.5);
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            font-size: 24px;
+            animation: floatText 8s linear forwards;
+        }
+        @keyframes floatText {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20vh) rotate(360deg);
+            }
+        }
+        @keyframes rocketTrail {
+            0% { transform: translateY(100vh) }
+            100% { transform: translateY(-20px) }
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: explode var(--duration, 1s) ease-out forwards;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        .toggle-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .sun-moon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .sun-moon.sun {
+            background: #FFD700;
+            box-shadow: 0 0 20px #FFD700;
+        }
+        .sun-moon.sun::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: radial-gradient(circle, #FFD700 30%, transparent 70%);
+            border-radius: 50%;
+            animation: sunGlow 2s ease-in-out infinite alternate;
+        }
+        .sun-moon.sun::after {
+            content: '';
+            position: absolute;
+            inset: -15px;
+            background: repeating-conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                transparent 20deg,
+                #FFD700 20deg,
+                transparent 21deg
+            );
+            animation: sunRays 10s linear infinite;
+        }
+        .sun-moon.moon {
+            background: #FFFFFF;
+            box-shadow: inset -8px -8px 0 0 #f4f4f4,
+                        0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .sun-moon.moon::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+            box-shadow: 
+                15px -5px 0 -2px rgba(255, 255, 255, 0.3),
+                -5px 15px 0 -1px rgba(255, 255, 255, 0.2);
+        }
+        @keyframes sunGlow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        @keyframes sunRays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -60%); }
+        }
+        .theme-transition {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--x) var(--y), 
+                        transparent 0%,
+                        rgba(0, 0, 0, 0.8) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .day-theme {
+            background: var(--day-bg);
+        }
+        .day-theme header,
+        .day-theme footer {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .day-theme h1,
+        .day-theme h2 {
+            color: var(--day-text);
+        }
+        .day-theme .message {
+            color: var(--day-text);
+        }
+        .day-theme .wish-message {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        .day-theme footer p,
+        .day-theme footer a {
+            color: var(--day-text);
+        }
+        .volume-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 25px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+            width: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .volume-control.expanded {
+            width: 160px;
+        }
+
+        .volume-icon {
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            min-width: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .volume-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-slider-container {
+            width: 0;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .volume-control.expanded .volume-slider-container {
+            width: 100px;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #ff6600;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #ff6600;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .volume-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Add these styles for the artistic title */
+        .title-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 20px;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #FF9933, #FF0066, #FFD700, #FF3366);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 5s ease infinite;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .title-lights {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        /* Enhanced floating wishes */
+        .floating-wish {
+            position: fixed;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            text-align: center;
+            pointer-events: none;
+            z-index: 1000;
+            padding: 10px 20px;
+            border-radius: 15px;
+            opacity: 0;
+            transform: translateY(100vh);
+            animation: floatUpAndFade 6s ease-out forwards;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            white-space: nowrap;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        @keyframes floatUpAndFade {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0.8);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(80vh) scale(1);
+            }
+            80% {
+                opacity: 1;
+                transform: translateY(20vh) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(0vh) scale(0.8);
+            }
+        }
+
+        /* Add or update these styles */
+        .logo-container {
+            position: absolute;
+            top: 100px; /* Adjust this value to move logo down */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .logo-title {
+            font-size: 4rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #FF9933, #FF0066, #FFD700, #FF3366);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 5s ease infinite;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-subtitle {
+            font-size: 2rem;
+            color: #fff;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(255, 153, 51, 0.8),
+                         0 0 20px rgba(255, 153, 51, 0.5);
+            opacity: 0.9;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, 
+                rgba(255, 153, 51, 0.2) 0%,
+                rgba(255, 153, 51, 0.1) 30%,
+                transparent 70%);
+            filter: blur(20px);
+            z-index: -1;
+        }
+
+        .logo-lights {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { 
+                opacity: 0.2; 
+                transform: scale(1); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.5); 
+            }
+        }
     </style>
 </head>
 <body>
@@ -237,10 +828,36 @@
             <h2>IT4B.in Wishes You a Happy Deepawali</h2>
         </header>
         <div class="main-content">
-            <h1>Happy Diwali!</h1>
+        
             <div class="diya-container" id="diya">
-                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-IZmdZHATI4SJvuHGZmTrfntSqxQHK0.png" alt="Decorative golden Diwali diya with intricate patterns and a lit flame" class="diya-image">
-                <div class="flame" id="flame"></div>
+                <svg viewBox="0 0 200 120" class="diya-svg">
+                    <!-- Diya Base -->
+                    <path class="diya-base" d="M40,80 C40,80 60,100 100,100 C140,100 160,80 160,80 C160,80 140,90 100,90 C60,90 40,80 40,80 Z" fill="#CD853F"/>
+                    
+                    <!-- Diya Bowl -->
+                    <path class="diya-bowl" d="M60,80 C60,40 140,40 140,80 C140,80 120,90 100,90 C80,90 60,80 60,80 Z" fill="#8B4513"/>
+                    
+                    <!-- Oil Surface -->
+                    <path class="oil-surface" d="M65,75 C65,75 85,82 100,82 C115,82 135,75 135,75 C135,75 115,80 100,80 C85,80 65,75 65,75 Z" fill="#4A3728"/>
+                    
+                    <!-- Wick -->
+                    <rect class="wick" x="98" y="65" width="4" height="10" fill="#000000"/>
+                    
+                    <!-- Enhanced Flame -->
+                    <g class="flame" opacity="0">
+                        <!-- Glow Effect -->
+                        <circle class="glow" cx="100" cy="60" r="25" fill="rgba(255, 160, 0, 0.3)" filter="blur(8px)"/>
+                        
+                        <!-- Outer Flame -->
+                        <path d="M100,35 C100,35 85,55 95,65 C100,75 100,75 100,75 C100,75 100,75 105,65 C115,55 100,35 100,35 Z" fill="#FF4500"/>
+                        
+                        <!-- Middle Flame -->
+                        <path d="M100,40 C100,40 90,55 95,65 C100,70 100,70 100,70 C100,70 100,70 105,65 C110,55 100,40 100,40 Z" fill="#FFA500"/>
+                        
+                        <!-- Inner Flame -->
+                        <path d="M100,45 C100,45 95,55 98,65 C100,70 100,70 100,70 C100,70 100,70 102,65 C105,55 100,45 100,45 Z" fill="#FFD700"/>
+                    </g>
+                </svg>
             </div>
             <p class="message" id="message">Click the diya to light it and start the celebration</p>
             <div class="wish-message" id="wish-message">
@@ -255,64 +872,167 @@
     </div>
 
     <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Add this at the start of your JavaScript
+        const diwaliMusic = new Audio('https://www.happydiwali.co/music/diwali-music.mp3'); // Replace with your actual music URL
+
+        // Backup music URLs in case the first one fails
+        const backupMusicUrls = [
+            'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+            'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+        ];
+
+        // Configure music settings
+        diwaliMusic.loop = true;
+        diwaliMusic.volume = 0.4;
+
+        // Add play button for better user experience
+        const musicControls = document.createElement('div');
+        musicControls.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0,0,0,0.5);
+                padding: 10px;
+                border-radius: 10px;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            ">
+                <button id="playMusic" style="
+                    background: none;
+                    border: none;
+                    color: white;
+                    cursor: pointer;
+                    font-size: 20px;
+                    padding: 5px;
+                ">🔈</button>
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value="40" 
+                    id="musicVolume"
+                    style="
+                        width: 100px;
+                        accent-color: #ff6600;
+                    "
+                >
+            </div>
+        `;
+        document.body.appendChild(musicControls);
+
+        // Handle music playback
+        const playButton = document.getElementById('playMusic');
+        let isMusicPlaying = false;
+
+        playButton.addEventListener('click', () => {
+            if (!isMusicPlaying) {
+                diwaliMusic.play()
+                    .then(() => {
+                        isMusicPlaying = true;
+                        playButton.textContent = '🔊';
+                    })
+                    .catch(error => {
+                        console.error('Music playback failed:', error);
+                        // Try backup music if main source fails
+                        tryBackupMusic();
+                    });
+            } else {
+                diwaliMusic.pause();
+                isMusicPlaying = false;
+                playButton.textContent = '🔈';
+            }
+        });
+
+        // Volume control listener
+        document.getElementById('musicVolume').addEventListener('input', (e) => {
+            diwaliMusic.volume = e.target.value / 100;
+        });
+
+        // Function to try backup music sources
+        function tryBackupMusic() {
+            let currentBackup = 0;
+            
+            function tryNextSource() {
+                if (currentBackup < backupMusicUrls.length) {
+                    diwaliMusic.src = backupMusicUrls[currentBackup];
+                    diwaliMusic.play()
+                        .then(() => {
+                            isMusicPlaying = true;
+                            playButton.textContent = '🔊';
+                        })
+                        .catch(() => {
+                            currentBackup++;
+                            tryNextSource();
+                        });
+                } else {
+                    console.error('All music sources failed');
+                    playButton.textContent = '❌';
+                    playButton.disabled = true;
+                }
+            }
+            
+            tryNextSource();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const diya = document.getElementById('diya');
-            const flame = document.getElementById('flame');
+            const flame = document.querySelector('.flame');
             const message = document.getElementById('message');
             const wishMessage = document.getElementById('wish-message');
             let isLit = false;
-            let firecrackers = [];
 
-            tsParticles.load("tsparticles", {
-                particles: {
-                    color: { value: "#FFD700" },
-                    move: { enable: true, speed: 2 },
-                    number: { value: 100 },
-                    opacity: { value: 0.5, random: true },
-                    shape: { type: "circle" },
-                    size: { value: 3, random: true },
-                },
-            });
-
-            diya.addEventListener('click', () => {
+            diya.addEventListener('click', async () => {
                 if (!isLit) {
                     isLit = true;
+                    
+                    // Try to play music if not already playing
+                    if (!isMusicPlaying) {
+                        diwaliMusic.play()
+                            .then(() => {
+                                isMusicPlaying = true;
+                                playButton.textContent = '🔊';
+                            })
+                            .catch(error => {
+                                console.error('Music playback failed:', error);
+                                tryBackupMusic();
+                            });
+                    }
+                    
                     flame.style.opacity = '1';
                     message.textContent = 'The diya is lit! Enjoy the fireworks!';
+                    
+                    // Add flash effect
+                    const flash = document.createElement('div');
+                    flash.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: ${document.querySelector('.container').classList.contains('day-theme') ? '#ffffff' : '#fde047'};
+                        opacity: 0.8;
+                        pointer-events: none;
+                        z-index: 9999;
+                        animation: flash 0.5s ease-out forwards;
+                    `;
+                    document.body.appendChild(flash);
+                    setTimeout(() => flash.remove(), 500);
+
                     setTimeout(() => {
                         wishMessage.style.opacity = '1';
                         wishMessage.style.transform = 'scale(1)';
                     }, 1000);
+                    
                     startFireworks();
+                    createFloatingText(); // Start floating texts
                 }
             });
-
-            function startFireworks() {
-                setInterval(addFirecracker, 500);
-            }
-
-            function addFirecracker() {
-                const firecracker = document.createElement('div');
-                firecracker.className = 'firecracker';
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * 100;
-                firecracker.style.left = `${x}px`;
-                firecracker.style.bottom = `${y}px`;
-                document.body.appendChild(firecracker);
-
-                firecracker.animate([
-                    { opacity: 1, transform: 'scale(0) translateY(0)' },
-                    { opacity: 1, transform: 'scale(1) translateY(-100px)' },
-                    { opacity: 0, transform: 'scale(1.5) translateY(-150px)' }
-                ], {
-                    duration: 1000,
-                    easing: 'ease-out'
-                });
-
-                setTimeout(() => {
-                    firecracker.remove();
-                }, 1000);
-            }
         });
 
         function getRandomFont() {
@@ -351,6 +1071,457 @@
         }
 
         createFloatingQuotes();
+
+        function createRocket() {
+            const rocket = document.createElement('div');
+            rocket.className = 'rocket';
+            
+            // Random position from bottom
+            const startX = Math.random() * window.innerWidth;
+            const rotation = (Math.random() - 0.5) * 20; // Random slight tilt
+            
+            rocket.style.left = `${startX}px`;
+            rocket.style.setProperty('--rotation', `${rotation}deg`);
+            
+            // Add rocket trail
+            const trail = document.createElement('div');
+            trail.className = 'rocket-trail';
+            rocket.appendChild(trail);
+            
+            // Add sparks
+            for (let i = 0; i < 3; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = `${Math.random() * 6 - 3}px`;
+                spark.style.bottom = `${Math.random() * 10}px`;
+                rocket.appendChild(spark);
+            }
+            
+            document.body.appendChild(rocket);
+            
+            // Animate rocket
+            const animation = rocket.animate([
+                { transform: 'translateY(0)' },
+                { transform: `translateY(-${window.innerHeight + 100}px)` }
+            ], {
+                duration: 1500,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+            
+            animation.onfinish = () => {
+                rocket.remove();
+                createStarExplosion(startX, 100);
+                playFireworkSound(); // Add explosion sound
+            };
+        }
+
+        function createStarExplosion(x, y) {
+            const colors = ['#ffff00', '#ffd700', '#ff8c00', '#ff4500', '#ff69b4', '#00ff00', '#00ffff'];
+            const explosion = document.createElement('div');
+            explosion.style.position = 'fixed';
+            explosion.style.left = `${x}px`;
+            explosion.style.top = `${y}px`;
+            explosion.style.zIndex = '1000';
+            
+            // Add flash effect
+            const flash = document.createElement('div');
+            flash.className = 'explosion-flash';
+            explosion.appendChild(flash);
+            
+            // Create star particles
+            for (let i = 0; i < 24; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-particle';
+                
+                const size = Math.random() * 10 + 5;
+                const angle = (i * 15) + Math.random() * 15;
+                const velocity = 100 + Math.random() * 100;
+                const rotation = Math.random() * 720;
+                const duration = 0.8 + Math.random() * 0.6;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.backgroundColor = color;
+                star.style.setProperty('--x', `${Math.cos(angle * Math.PI / 180) * velocity}px`);
+                star.style.setProperty('--y', `${Math.sin(angle * Math.PI / 180) * velocity}px`);
+                star.style.setProperty('--rotation', `${rotation}deg`);
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                explosion.appendChild(star);
+            }
+            
+            document.body.appendChild(explosion);
+            setTimeout(() => explosion.remove(), 2000);
+        }
+
+        function startFireworks() {
+            // Launch rockets regularly
+            setInterval(() => {
+                createRocket();
+            }, 1000);
+        }
+
+        function createThemeToggle() {
+            const toggle = document.createElement('button');
+            toggle.className = 'theme-toggle';
+            toggle.innerHTML = `
+                <div class="toggle-wrapper">
+                    <div class="sun-moon moon"></div>
+                </div>
+            `;
+            document.body.appendChild(toggle);
+
+            let isNightTheme = true;
+            const container = document.querySelector('.container');
+            const sunMoon = toggle.querySelector('.sun-moon');
+
+            toggle.addEventListener('click', (e) => {
+                isNightTheme = !isNightTheme;
+                
+                // Create transition overlay
+                const transition = document.createElement('div');
+                transition.className = 'theme-transition';
+                const rect = toggle.getBoundingClientRect();
+                transition.style.setProperty('--x', `${rect.left + rect.width/2}px`);
+                transition.style.setProperty('--y', `${rect.top + rect.height/2}px`);
+                document.body.appendChild(transition);
+                
+                // Animate transition
+                requestAnimationFrame(() => {
+                    transition.style.opacity = '1';
+                    setTimeout(() => {
+                        // Update theme
+                        if (isNightTheme) {
+                            container.classList.remove('day-theme');
+                            sunMoon.className = 'sun-moon moon';
+                        } else {
+                            container.classList.add('day-theme');
+                            sunMoon.className = 'sun-moon sun';
+                        }
+                        
+                        // Fade out transition
+                        transition.style.opacity = '0';
+                        setTimeout(() => transition.remove(), 500);
+                    }, 300);
+                });
+
+                // Add click effect
+                toggle.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    toggle.style.transform = '';
+                }, 200);
+            });
+
+            // Add floating animation
+            function updateFloat() {
+                const time = Date.now() / 1500;
+                sunMoon.style.transform = `translate(-50%, -50%) translateY(${Math.sin(time) * 5}px)`;
+                requestAnimationFrame(updateFloat);
+            }
+            updateFloat();
+        }
+
+        // Call this function after DOM content is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            createThemeToggle();
+        });
+
+        // Single source of truth for audio control
+        const audioController = {
+            initialized: false,
+            init() {
+                if (this.initialized) return; // Prevent multiple initializations
+                
+                // Remove any existing controls first
+                document.querySelectorAll('.volume-control, [id="musicVolume"]').forEach(el => el.remove());
+                
+                const volumeControl = document.createElement('div');
+                volumeControl.className = 'volume-control';
+                volumeControl.innerHTML = `
+                    <div class="volume-icon">🔊</div>
+                    <div class="volume-slider-container">
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="100" 
+                            value="40" 
+                            class="volume-slider"
+                        >
+                    </div>
+                `;
+                document.body.appendChild(volumeControl);
+
+                const icon = volumeControl.querySelector('.volume-icon');
+                const slider = volumeControl.querySelector('.volume-slider');
+                let isExpanded = false;
+                let timeoutId;
+                let previousVolume = 40;
+
+                // Expand/collapse handlers
+                volumeControl.addEventListener('mouseenter', () => {
+                    clearTimeout(timeoutId);
+                    volumeControl.classList.add('expanded');
+                });
+
+                volumeControl.addEventListener('mouseleave', () => {
+                    timeoutId = setTimeout(() => {
+                        if (!isExpanded) {
+                            volumeControl.classList.remove('expanded');
+                        }
+                    }, 500);
+                });
+
+                // Volume control
+                slider.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    if (diwaliMusic) {
+                        diwaliMusic.volume = value / 100;
+                        icon.textContent = value == 0 ? '🔇' : value < 50 ? '🔉' : '🔊';
+                    }
+                });
+
+                // Mute toggle
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (diwaliMusic) {
+                        if (diwaliMusic.volume > 0) {
+                            previousVolume = slider.value;
+                            slider.value = 0;
+                            diwaliMusic.volume = 0;
+                            icon.textContent = '🔇';
+                        } else {
+                            slider.value = previousVolume;
+                            diwaliMusic.volume = previousVolume / 100;
+                            icon.textContent = previousVolume < 50 ? '🔉' : '🔊';
+                        }
+                    }
+                });
+
+                this.initialized = true;
+            }
+        };
+
+        // Single initialization point
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remove any existing controls first
+            document.querySelectorAll('.volume-control, [id="musicVolume"]').forEach(el => el.remove());
+            
+            // Initialize theme toggle
+            createThemeToggle();
+            
+            // Initialize volume control
+            audioController.init();
+        });
+
+        // Update or add the floating text function
+        function createFloatingText() {
+            const wishes = [
+                "✨ Happy Diwali! ✨",
+                "🪔 शुभ दीपावली 🪔",
+                "✨ Festival of Lights ✨",
+                "🎆 Peace & Prosperity 🎆",
+                "💫 Joy & Happiness 💫",
+                "✨ Light Over Darkness ✨",
+                "🎊 Celebrate Life 🎊",
+                "💝 Love & Light 💝",
+                "🌟 New Beginnings 🌟",
+                "��� Prosperity & Growth ✨"
+            ];
+
+            setInterval(() => {
+                const text = document.createElement('div');
+                text.className = 'floating-text';
+                text.textContent = wishes[Math.floor(Math.random() * wishes.length)];
+                
+                // Random position and styling
+                text.style.left = `${Math.random() * 80 + 10}vw`; // Keep away from edges
+                text.style.color = `hsl(${Math.random() * 360}, 100%, 75%)`; // Random pastel color
+                text.style.fontSize = `${Math.random() * 16 + 20}px`; // Random size between 20-36px
+                
+                // Add glowing effect
+                const hue = Math.random() * 360;
+                text.style.textShadow = `
+                    0 0 10px hsla(${hue}, 100%, 75%, 0.8),
+                    0 0 20px hsla(${hue}, 100%, 75%, 0.5),
+                    0 0 30px hsla(${hue}, 100%, 75%, 0.3)
+                `;
+
+                document.body.appendChild(text);
+
+                // Remove the element after animation completes
+                setTimeout(() => {
+                    text.remove();
+                }, 8000); // Match this with animation duration
+            }, 2000); // Create new text every 2 seconds
+        }
+
+        // Add this function to create the artistic title
+        function createArtisticTitle() {
+            const titleContainer = document.querySelector('.title-container');
+            titleContainer.innerHTML = `
+                <h1 class="main-title">IT4B.in Wishes You a Happy Deepawali</h1>
+            `;
+
+            // Add twinkling lights around the title
+            for (let i = 0; i < 20; i++) {
+                const light = document.createElement('div');
+                light.className = 'title-lights';
+                light.style.left = `${Math.random() * 100}%`;
+                light.style.top = `${Math.random() * 100}%`;
+                light.style.animationDelay = `${Math.random() * 2}s`;
+                light.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                titleContainer.appendChild(light);
+            }
+        }
+
+        // Update the floating wishes function
+        function createFloatingWishes() {
+            const wishes = [
+                "✨ May your life be as bright as the Diwali lights ✨",
+                "🪔 शुभ दीपावली - आपका जीवन खुशियों से भरा हो 🪔",
+                "✨ Let the light guide you towards success ✨",
+                "🎆 Wishing you joy, prosperity, and happiness 🎆",
+                "💫 May this Diwali bring new beginnings 💫",
+                "✨ Light triumphs over darkness ✨",
+                "🎊 Celebrate the festival of lights 🎊",
+                "💝 Peace and prosperity to you and yours 💝",
+                "🌟 Let your dreams take flight 🌟",
+                "✨ Happy Diwali from IT4B.in ✨"
+            ];
+
+            let index = 0;
+            const createWish = () => {
+                const wish = document.createElement('div');
+                wish.className = 'floating-wish';
+                wish.textContent = wishes[index];
+                
+                // Random horizontal position
+                wish.style.left = `${Math.random() * 60 + 20}%`;
+                
+                // Random color with glow effect
+                const hue = Math.random() * 360;
+                wish.style.color = `hsl(${hue}, 100%, 75%)`;
+                wish.style.textShadow = `
+                    0 0 10px hsl(${hue}, 100%, 50%),
+                    0 0 20px hsl(${hue}, 100%, 50%),
+                    0 0 30px hsl(${hue}, 100%, 50%)
+                `;
+                
+                document.body.appendChild(wish);
+                
+                // Remove after animation
+                setTimeout(() => wish.remove(), 6000);
+                
+                // Update index
+                index = (index + 1) % wishes.length;
+            };
+
+            // Create wishes with interval
+            return setInterval(createWish, 3000);
+        }
+
+        // Update your initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            createArtisticTitle();
+            // ... other initialization code ...
+        });
+
+        // Update your diya click handler
+        diya.addEventListener('click', async () => {
+            if (!isLit) {
+                isLit = true;
+                // ... existing code ...
+                
+                // Start floating wishes
+                const wishesInterval = createFloatingWishes();
+                
+                // Optional: Stop wishes after some time
+                // setTimeout(() => clearInterval(wishesInterval), 60000);
+            }
+        });
+
+        // Update or add this function
+        function createLogo() {
+            // Remove any existing logo first
+            const existingLogo = document.querySelector('.logo-container');
+            if (existingLogo) existingLogo.remove();
+
+            const logoContainer = document.createElement('div');
+            logoContainer.className = 'logo-container';
+            
+            // Add glow effect
+            const glow = document.createElement('div');
+            glow.className = 'logo-glow';
+            logoContainer.appendChild(glow);
+            
+            // Add main title
+            const title = document.createElement('h1');
+            title.className = 'logo-title';
+            title.textContent = 'IT4B.in';
+            logoContainer.appendChild(title);
+            
+            // Add subtitle
+            const subtitle = document.createElement('div');
+            subtitle.className = 'logo-subtitle';
+            subtitle.textContent = 'Wishes You a Happy Deepawali';
+            logoContainer.appendChild(subtitle);
+            
+            // Add twinkling lights
+            for (let i = 0; i < 15; i++) {
+                const light = document.createElement('div');
+                light.className = 'logo-lights';
+                light.style.left = `${Math.random() * 100}%`;
+                light.style.top = `${Math.random() * 100}%`;
+                light.style.animationDelay = `${Math.random() * 2}s`;
+                light.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                logoContainer.appendChild(light);
+            }
+            
+            document.body.appendChild(logoContainer);
+        }
+
+        // Update your initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            createLogo();
+            // ... other initialization code ...
+        });
+
+        // Make sure the logo stays visible when diya is lit
+        diya.addEventListener('click', async () => {
+            if (!isLit) {
+                isLit = true;
+                // ... existing code ...
+                
+                // Ensure logo stays on top
+                const logoContainer = document.querySelector('.logo-container');
+                if (logoContainer) {
+                    logoContainer.style.zIndex = '1001';
+                }
+                
+                // ... rest of your click handler code ...
+            }
+        });
+
+        // Add YouTube API code
+        let tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        let firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtubeVideo', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Player is ready
+            console.log('Player is ready');
+        }
     </script>
 </body>
 </html>
